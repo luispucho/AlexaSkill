@@ -1,0 +1,10 @@
+﻿GetPartInformationIntent me de información de la parte {PartNum}
+
+PrintPartInformationIntent imprima información de la parte {PartNum} 
+PrintPartInformationIntent me envíe información de la parte {PartNum}
+PrintPartInformationIntent me envíe por correo información de la parte {PartNum}
+
+AMAZON.CancelIntent cancela todo
+AMAZON.StopIntent aborta proceso
+AMAZON.HelpIntent ayuda
+AMAZON.HelpIntent me de ayuda

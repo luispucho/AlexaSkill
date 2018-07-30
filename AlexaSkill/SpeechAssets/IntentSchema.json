@@ -1,0 +1,34 @@
+﻿{
+  "intents": [
+    {
+      "intent": "GetPartInformationIntent",
+      "slots": [
+        {
+          "name": "PartNum",
+          "type": "AMAZON.LITERAL"
+        }
+      ]
+    },
+    {
+      "intent": "PrintPartInformationIntent",
+      "slots": [
+        {
+          "name": "PartNum",
+          "type": "AMAZON.LITERAL"
+        }
+      ]
+    },
+    {
+      "intent": "AMAZON.CancelIntent",
+      "slots": []
+    },
+    {
+      "intent": "AMAZON.StopIntent",
+      "slots": []
+    },
+    {
+      "intent": "AMAZON.HelpIntent",
+      "slots": []
+    }
+  ]
+}
