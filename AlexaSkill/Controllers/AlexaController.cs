@@ -3,17 +3,35 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.ModelBinding;
 using AlexaSkill;
+using FireSharp;
+using FireSharp.Config;
+using FireSharp.Interfaces;
+using Microsoft.Ajax.Utilities;
 
 namespace AlexaSkill.Controllers
 {
     public class AlexaController : ApiController
     {
-        [HttpPost, Route("api/alexa/demo")]
-        public dynamic Epicor(AlexaSkill.Data.AlexaRequest alexaRequest)
+        private IFirebaseConfig config => new FirebaseConfig()
         {
+            AuthSecret = System.Configuration.ConfigurationManager.ConnectionStrings["Firebase_Db"].ConnectionString + "i",
+            BasePath = "https://iotclass-18t2.firebaseio.com/"
+        };
+        private static IFirebaseClient _client;
+
+        public IFirebaseClient FirebaseClientClient => _client ?? (_client = new FirebaseClient(config));
+
+
+        [HttpPost, Route("api/alexa/demo")]
+        public dynamic Epicor(dynamic alexaRequest)
+        {
+
+
+            /*
             new Data.Requests().Create(new Data.Request
             {
                 MemberId = alexaRequest.Session.Attributes?.MemberId ?? 0,
@@ -30,7 +48,28 @@ namespace AlexaSkill.Controllers
                 //SlotsList = alexaRequest.Request.Intent.GetSlots(),
                 DateCreated = DateTime.UtcNow
             });
+            */
 
+            string requestIntent = alexaRequest.request?.intent?.name ?? "none";
+
+            FirebaseClientClient.Set("AlexaSessionId", alexaRequest.session.sessionId);
+            
+            FirebaseClientClient.Set("AlexaIntent", requestIntent);
+            var responseText = "ya le vaaaa!";
+            switch (requestIntent)
+            {
+                case "MoveBackwardIntent":
+
+                    break;
+                case "MoveForwardIntent":
+                    break;
+                case "PlayHornIntent":
+                    break;
+                default:
+                    responseText = "bienvenido al colibri mandingo";
+                    break;
+            }
+            //add a switch
             return new
             {
                 version = "1.0",
@@ -40,13 +79,13 @@ namespace AlexaSkill.Controllers
                     outputSpeech = new
                     {
                         type = "PlainText",
-                        text = "Hello happy World!",
+                        text = responseText,
                     },
                     card = new
                     {
                         type = "Simple",
-                        title = "Epicor",
-                        content = "Hello funny world!"
+                        title = "Colibri Mandingo",
+                        content = "Hola guardian"
                     },
                     shouldEndSession = true
                 }
