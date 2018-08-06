@@ -29,44 +29,49 @@ namespace AlexaSkill.Controllers
         [HttpPost, Route("api/alexa/demo")]
         public dynamic Epicor(dynamic alexaRequest)
         {
+            var locale = alexaRequest.request?.locale ?? ""; //language used in alexa device
+            string requestIntent = alexaRequest.request?.intent?.name.ToString() ?? "none";
+            var timeTotal = Convert.ToInt32(alexaRequest.request?.intent?.slots?.seconds ?? "3");
 
-
-            /*
-            new Data.Requests().Create(new Data.Request
-            {
-                MemberId = alexaRequest.Session.Attributes?.MemberId ?? 0,
-                Timestamp = alexaRequest.Request.Timestamp,
-                Intent = (alexaRequest.Request.Intent == null) ? "" : alexaRequest.Request.Intent.Name,
-                AppId = alexaRequest.Session.Application.ApplicationId,
-                RequestId = alexaRequest.Request.RequestId,
-                SessionId = alexaRequest.Session.SessionId,
-                UserId = alexaRequest.Session.User.UserId,
-                IsNew = alexaRequest.Session.New,
-                Version = alexaRequest.Version,
-                Type = alexaRequest.Request.Type,
-                Reason = alexaRequest.Request.Reason,
-                //SlotsList = alexaRequest.Request.Intent.GetSlots(),
-                DateCreated = DateTime.UtcNow
-            });
-            */
-
-            string requestIntent = alexaRequest.request?.intent?.name ?? "none";
-
-            FirebaseClientClient.Set("AlexaSessionId", alexaRequest.session.sessionId);
-            
+            FirebaseClientClient.Set("AlexaSessionId", alexaRequest.session.sessionId);         
             FirebaseClientClient.Set("AlexaIntent", requestIntent);
-            var responseText = "ya le vaaaa!";
-            switch (requestIntent)
+
+            var responseText = "got it!";
+
+            switch (requestIntent.Replace(@"""",""))
             {
                 case "MoveBackwardIntent":
-
+                    FirebaseClientClient.Set("backward", timeTotal);
                     break;
                 case "MoveForwardIntent":
-                    break;
+                    FirebaseClientClient.Set("forward", timeTotal);
+                    break; 
                 case "PlayHornIntent":
+                    FirebaseClientClient.Set("horn", 1);
                     break;
+                case "PlayStarWarsMusicIntent":
+                    FirebaseClientClient.Set("horn", 2);
+                    responseText = "may the force be with you";
+                    break;
+                case "LightOnIntent":
+                    FirebaseClientClient.Set("light", true);
+                    break;
+                case "LightOffIntent":
+                    FirebaseClientClient.Set("light", false);
+                    break;
+                case "MoveRightIntent":
+                    FirebaseClientClient.Set("forward", timeTotal);
+                    FirebaseClientClient.Set("right", true);
+                    FirebaseClientClient.Set("left", false);
+                    break;
+                case "MoveLeftIntent":
+                    FirebaseClientClient.Set("forward", timeTotal);
+                    FirebaseClientClient.Set("left", true);
+                    FirebaseClientClient.Set("right", false);
+                    break;
+                    
                 default:
-                    responseText = "bienvenido al colibri mandingo";
+                    responseText = (new Random()).Next(0, 11) % 2 == 0 ? "what up dude, let's do it!" : "they see me rolling";
                     break;
             }
             //add a switch
@@ -85,7 +90,7 @@ namespace AlexaSkill.Controllers
                     {
                         type = "Simple",
                         title = "Colibri Mandingo",
-                        content = "Hola guardian"
+                        content = "they see me rolling"
                     },
                     shouldEndSession = true
                 }
